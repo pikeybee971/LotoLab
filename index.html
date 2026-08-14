@@ -25,6 +25,12 @@ button{font-weight:600}
 .muted{color:#666;font-size:12px;line-height:1.35}
 @media(max-width:560px){.controls,.actions,.cols{grid-template-columns:1fr}}
 </style>
+
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+
 </head>
 <body>
 <div class="panel">
@@ -186,5 +192,14 @@ async function chargerStats(){
 jeu.addEventListener("change",showStats);
 chargerStats();
 </script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {});
+  });
+}
+</script>
+
 </body>
 </html>

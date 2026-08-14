@@ -1,0 +1,19 @@
+LotoLab iPhone – version Web App
+
+À déposer dans le dépôt GitHub LotoLab :
+- index.html  (remplace l'actuel)
+- manifest.json
+- sw.js
+- icon-192.png
+- icon-512.png
+- apple-touch-icon.png
+
+Conservez aussi votre fichier stats.json déjà présent.
+
+Après publication GitHub Pages :
+1. Ouvrez LotoLab dans Safari sur l'iPhone.
+2. Touchez Partager.
+3. Choisissez « Sur l’écran d’accueil ».
+4. Validez « Ajouter ».
+
+LotoLab apparaîtra avec sa propre icône et s’ouvrira en mode application.

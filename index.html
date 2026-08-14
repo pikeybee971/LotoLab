@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="LotoLab">
+<title>LotoLab iPhone</title>
+<style>
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+body{margin:0;background:#f3f4f6;color:#111;padding:16px}
+.panel{max-width:760px;margin:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 18px #0002}
+h1{text-align:center;font-size:28px;margin:8px 0 14px}
+.status{font-size:13px;background:#f6f6f6;border-radius:10px;padding:10px;margin-bottom:12px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{font-size:13px}
+select,button{width:100%;font-size:16px;padding:10px;border-radius:10px;border:1px solid #ccc;background:white}
+button{font-weight:600}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.box{border:1px solid #ddd;border-radius:14px;padding:14px;margin-top:14px}
+.ball,.special{display:inline-flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;background:#eee;margin:4px;font-weight:700;font-size:18px}
+.special{background:white;border:2px solid #777}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.muted{color:#666;font-size:12px;line-height:1.35}
+@media(max-width:560px){.controls,.actions,.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="panel">
+<h1>🎲 LotoLab</h1>
+<div id="status" class="status">Version iPhone — données locales de test</div>
+
+<div class="controls">
+<label>Jeu
+<select id="jeu">
+<option>EuroMillions</option>
+<option>Loto</option>
+<option>EuroDreams</option>
+</select></label>
+
+<label>Mode statistique
+<select id="mode">
+<option selected>Hasard</option>
+<option>Chauds</option>
+<option>Froids</option>
+<option>Mix chaud / froid</option>
+</select></label>
+
+<label>Moteur
+<select id="engine">
+<option>Crypto aléatoire</option>
+<option selected>Boulier virtuel</option>
+</select></label>
+
+<label>Grilles
+<select id="nb">
+<option selected>1</option>
+<option>5</option>
+<option>10</option>
+</select></label>
+</div>
+
+<div class="actions">
+<button onclick="generer()">🎲 Générer</button>
+<button onclick="chargerStats()">↻ Recharger les stats</button>
+</div>
+
+<div class="box">
+<h3>Grille(s)</h3>
+<div id="result"></div>
+</div>
+
+<div class="box">
+<h3>Statistiques</h3>
+<div id="stats"></div>
+</div>
+
+<p class="muted">
+Cette première version web sert à valider l'installation sur iPhone.
+La mise à jour automatique FDJ sera ajoutée juste après.
+Les statistiques historiques ne prédisent pas le prochain tirage.
+</p>
+</div>
+
+<script>
+const params={
+ "EuroMillions":{min:1,max:50,q:5,smin:1,smax:12,sq:2,slabel:"Étoiles"},
+ "Loto":{min:1,max:49,q:5,smin:1,smax:10,sq:1,slabel:"Chance"},
+ "EuroDreams":{min:1,max:40,q:6,smin:1,smax:5,sq:1,slabel:"Dream"}
+};
+
+let DATA={
+ "EuroMillions":{"main":[],"special":[]},
+ "Loto":{"main":[],"special":[]},
+ "EuroDreams":{"main":[],"special":[]}
+};
+
+function cryptoInt(max){
+ const lim=Math.floor(0x100000000/max)*max;
+ const a=new Uint32Array(1);
+ let x;
+ do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);
+ return x%max;
+}
+function sample(pool,n){
+ pool=[...pool]; const out=[];
+ while(pool.length && out.length<n){
+   out.push(pool.splice(cryptoInt(pool.length),1)[0]);
+ }
+ return out;
+}
+function bowl(pool,n){
+ pool=[...pool]; const out=[];
+ for(let k=0;k<n;k++){
+   for(let pass=0;pass<5;pass++){
+     for(let i=pool.length-1;i>0;i--){
+       const j=cryptoInt(i+1);
+       [pool[i],pool[j]]=[pool[j],pool[i]];
+     }
+   }
+   out.push(pool.splice(cryptoInt(pool.length),1)[0]);
+ }
+ return out;
+}
+function statsReady(game,special){
+ const arr=DATA[game][special?"special":"main"];
+ return Array.isArray(arr)&&arr.length>0;
+}
+function choose(game,special,mode,engine,qty){
+ const p=params[game];
+ const mn=special?p.smin:p.min, mx=special?p.smax:p.max;
+ const all=Array.from({length:mx-mn+1},(_,i)=>i+mn);
+ const picker=engine==="Boulier virtuel"?bowl:sample;
+ if(mode==="Hasard" || !statsReady(game,special)) return picker(all,qty);
+
+ const arr=DATA[game][special?"special":"main"];
+ const size=Math.min(12,all.length);
+ const hot=arr.slice(0,size).map(x=>x.n);
+ const cold=arr.slice(-size).map(x=>x.n);
+ if(mode==="Chauds") return picker(hot,qty);
+ if(mode==="Froids") return picker(cold,qty);
+
+ const a=Math.floor(qty/2);
+ const first=picker(hot,a);
+ const rest=cold.filter(x=>!first.includes(x));
+ return first.concat(picker(rest,qty-a));
+}
+function generer(){
+ const game=jeu.value, mode=document.getElementById("mode").value, engine=document.getElementById("engine").value, nb=+document.getElementById("nb").value;
+ const p=params[game]; let h="";
+ for(let i=0;i<nb;i++){
+   const main=choose(game,false,mode,engine,p.q).sort((a,b)=>a-b);
+   const spec=choose(game,true,mode,engine,p.sq).sort((a,b)=>a-b);
+   h+=`<b>Grille ${i+1}</b><br>`;
+   main.forEach(n=>h+=`<span class="ball">${String(n).padStart(2,"0")}</span>`);
+   h+=`<br><b>${p.slabel} :</b> `;
+   spec.forEach(n=>h+=`<span class="special">${String(n).padStart(2,"0")}</span>`);
+   h+="<br><br>";
+ }
+ result.innerHTML=h;
+}
+function showStats(){
+ const game=jeu.value, p=params[game];
+ const block=(title,a)=>{
+   if(!a.length) return `<b>${title}</b><br><span class="muted">Pas encore chargé</span>`;
+   return `<b>${title}</b><br>🔥 Plus sortis<br>`+
+     a.slice(0,8).map(x=>`${String(x.n).padStart(2,"0")} : ${x.count}`).join("<br>")+
+     `<br><br>🧊 Moins sortis<br>`+
+     a.slice(-8).map(x=>`${String(x.n).padStart(2,"0")} : ${x.count}`).join("<br>");
+ };
+ stats.innerHTML=`<div class="cols"><div>${block("Numéros",DATA[game].main)}</div><div>${block(p.slabel,DATA[game].special)}</div></div>`;
+}
+async function chargerStats(){
+ try{
+   const r=await fetch("stats.json",{cache:"no-store"});
+   if(!r.ok) throw new Error();
+   const d=await r.json();
+   DATA=d.games||d;
+   status.textContent="Statistiques chargées — "+new Date().toLocaleString("fr-FR");
+ }catch(e){
+   status.textContent="Version iPhone installée — mise à jour FDJ automatique à ajouter à l'étape suivante";
+ }
+ showStats();
+}
+jeu.addEventListener("change",showStats);
+chargerStats();
+</script>
+</body>
+</html>

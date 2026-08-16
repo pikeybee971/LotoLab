@@ -2,204 +2,68 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="LotoLab">
-<title>LotoLab iPhone</title>
+<meta name="theme-color" content="#f4f4f4">
+<title>LotoLab V4.2 iPhone</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
-body{margin:0;background:#f3f4f6;color:#111;padding:16px}
-.panel{max-width:760px;margin:auto;background:#fff;border-radius:18px;padding:18px;box-shadow:0 4px 18px #0002}
-h1{text-align:center;font-size:28px;margin:8px 0 14px}
-.status{font-size:13px;background:#f6f6f6;border-radius:10px;padding:10px;margin-bottom:12px}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-label{font-size:13px}
-select,button{width:100%;font-size:16px;padding:10px;border-radius:10px;border:1px solid #ccc;background:white}
-button{font-weight:600}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.box{border:1px solid #ddd;border-radius:14px;padding:14px;margin-top:14px}
-.ball,.special{display:inline-flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;background:#eee;margin:4px;font-weight:700;font-size:18px}
-.special{background:white;border:2px solid #777}
-.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.muted{color:#666;font-size:12px;line-height:1.35}
-@media(max-width:560px){.controls,.actions,.cols{grid-template-columns:1fr}}
+*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f4f4f4;margin:0;padding:14px;min-height:100vh}.panel{max-width:1040px;margin:auto;background:#fff;padding:18px;border-radius:16px;box-shadow:0 4px 20px #0002}h1{text-align:center;font-size:26px;margin:8px 0 14px}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.controls label{font-size:13px}.controls select,.controls button{width:100%;font-size:16px;padding:11px 10px;border-radius:9px;border:1px solid #bbb;background:#fff}.controls button{cursor:pointer;font-weight:600}.controls .wide{grid-column:1/-1}.controls button:disabled{opacity:.45;cursor:not-allowed}#stopBtn{background:#b42318;color:white;border-color:#8f1d14}.spinning{animation:pulse .45s ease-in-out infinite alternate}@keyframes pulse{from{transform:scale(1)}to{transform:scale(1.015)}}.grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:16px}.box{border:1px solid #ddd;border-radius:12px;padding:14px;min-height:180px}.ball,.special{display:inline-flex;width:44px;height:44px;border-radius:50%;align-items:center;justify-content:center;background:#eee;margin:3px;font-weight:700;font-size:18px}.special{border:2px solid #777;background:#fff}.status{margin:10px 0;padding:9px;background:#f7f7f7;border-radius:8px;font-size:13px;line-height:1.35}.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.muted{color:#666;font-size:12px;line-height:1.35}.smallbtn{font-size:14px!important}@media(min-width:760px){body{padding:28px}.panel{padding:24px}.controls{display:flex;flex-wrap:wrap;align-items:end}.controls label{min-width:150px}.controls select,.controls button{width:auto}.controls .wide{grid-column:auto}.grid{grid-template-columns:1fr 1fr}.box{min-height:310px}}
 </style>
-
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#ffffff">
-<meta name="mobile-web-app-capable" content="yes">
-
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
 <body>
 <div class="panel">
-<h1>🎲 LotoLab</h1>
-<div id="status" class="status">Version iPhone — données locales de test</div>
-
+<h1>🎲 LotoLab V4.2</h1>
+<div id="status" class="status">Prêt — chargement des statistiques FDJ…</div>
 <div class="controls">
-<label>Jeu
-<select id="jeu">
-<option>EuroMillions</option>
-<option>Loto</option>
-<option>EuroDreams</option>
-</select></label>
-
-<label>Mode statistique
-<select id="mode">
-<option selected>Hasard</option>
-<option>Chauds</option>
-<option>Froids</option>
-<option>Mix chaud / froid</option>
-</select></label>
-
-<label>Moteur
-<select id="engine">
-<option>Crypto aléatoire</option>
-<option selected>Boulier virtuel</option>
-</select></label>
-
-<label>Grilles
-<select id="nb">
-<option selected>1</option>
-<option>5</option>
-<option>10</option>
-</select></label>
+<label>Jeu<br><select id="jeu"><option>EuroMillions</option><option>Loto</option><option>EuroDreams</option></select></label>
+<label>Mode statistique<br><select id="mode"><option selected>Hasard</option><option>Chauds</option><option>Froids</option><option>Mix chaud / froid</option></select></label>
+<label>Moteur<br><select id="engine"><option>Crypto aléatoire</option><option selected>Boulier virtuel</option></select></label>
+<label>Grilles<br><select id="nb"><option selected>1</option><option>5</option><option>10</option></select></label>
+<button id="generateBtn" onclick="generer()">🎲 Générer</button>
+<button id="stopBtn" onclick="stopBoulier()" disabled>⏹ STOP</button>
+<button class="smallbtn wide" onclick="refreshStats()">↻ Actualiser FDJ</button>
 </div>
-
-<div class="actions">
-<button onclick="generer()">🎲 Générer</button>
-<button onclick="chargerStats()">↻ Recharger les stats</button>
+<div class="grid">
+<div class="box"><h3>Grille(s)</h3><div id="result"></div></div>
+<div class="box"><h3>Statistiques FDJ</h3><div id="stats"></div></div>
 </div>
-
-<div class="box">
-<h3>Grille(s)</h3>
-<div id="result"></div>
+<p class="muted">Le mode « Boulier virtuel » brasse plusieurs fois l’urne puis extrait les boules sans remise. Les modes chauds/froids/mix utilisent uniquement les fréquences historiques et ne prédisent pas le prochain tirage.</p>
 </div>
-
-<div class="box">
-<h3>Statistiques</h3>
-<div id="stats"></div>
-</div>
-
-<p class="muted">
-Cette première version web sert à valider l'installation sur iPhone.
-La mise à jour automatique FDJ sera ajoutée juste après.
-Les statistiques historiques ne prédisent pas le prochain tirage.
-</p>
-</div>
-
 <script>
-const params={
- "EuroMillions":{min:1,max:50,q:5,smin:1,smax:12,sq:2,slabel:"Étoiles"},
- "Loto":{min:1,max:49,q:5,smin:1,smax:10,sq:1,slabel:"Chance"},
- "EuroDreams":{min:1,max:40,q:6,smin:1,smax:5,sq:1,slabel:"Dream"}
+const PARAMS={
+ EuroMillions:{min:1,max:50,q:5,smin:1,smax:12,sq:2,slabel:"Étoiles"},
+ Loto:{min:1,max:49,q:5,smin:1,smax:10,sq:1,slabel:"Chance"},
+ EuroDreams:{min:1,max:40,q:6,smin:1,smax:5,sq:1,slabel:"Dream"}
 };
-
-let DATA={
- "EuroMillions":{"main":[],"special":[]},
- "Loto":{"main":[],"special":[]},
- "EuroDreams":{"main":[],"special":[]}
+const FDJ_ARCHIVES={
+ EuroMillions:"https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/documentations/1a2b3c4d-9876-4562-b3fc-2c963f66afe6",
+ Loto:"https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/documentations/1a2b3c4d-9876-4562-b3fc-2c963f66afp6",
+ EuroDreams:"https://www.sto.api.fdj.fr/anonymous/service-draw-info/v3/documentations/1a2b3c4d-9876-4562-b3fc-2c963f66afa5"
 };
-
-function cryptoInt(max){
- const lim=Math.floor(0x100000000/max)*max;
- const a=new Uint32Array(1);
- let x;
- do{crypto.getRandomValues(a);x=a[0]}while(x>=lim);
- return x%max;
-}
-function sample(pool,n){
- pool=[...pool]; const out=[];
- while(pool.length && out.length<n){
-   out.push(pool.splice(cryptoInt(pool.length),1)[0]);
- }
- return out;
-}
-function bowl(pool,n){
- pool=[...pool]; const out=[];
- for(let k=0;k<n;k++){
-   for(let pass=0;pass<5;pass++){
-     for(let i=pool.length-1;i>0;i--){
-       const j=cryptoInt(i+1);
-       [pool[i],pool[j]]=[pool[j],pool[i]];
-     }
-   }
-   out.push(pool.splice(cryptoInt(pool.length),1)[0]);
- }
- return out;
-}
-function statsReady(game,special){
- const arr=DATA[game][special?"special":"main"];
- return Array.isArray(arr)&&arr.length>0;
-}
-function choose(game,special,mode,engine,qty){
- const p=params[game];
- const mn=special?p.smin:p.min, mx=special?p.smax:p.max;
- const all=Array.from({length:mx-mn+1},(_,i)=>i+mn);
- const picker=engine==="Boulier virtuel"?bowl:sample;
- if(mode==="Hasard" || !statsReady(game,special)) return picker(all,qty);
-
- const arr=DATA[game][special?"special":"main"];
- const size=Math.min(12,all.length);
- const hot=arr.slice(0,size).map(x=>x.n);
- const cold=arr.slice(-size).map(x=>x.n);
- if(mode==="Chauds") return picker(hot,qty);
- if(mode==="Froids") return picker(cold,qty);
-
- const a=Math.floor(qty/2);
- const first=picker(hot,a);
- const rest=cold.filter(x=>!first.includes(x));
- return first.concat(picker(rest,qty-a));
-}
-function generer(){
- const game=jeu.value, mode=document.getElementById("mode").value, engine=document.getElementById("engine").value, nb=+document.getElementById("nb").value;
- const p=params[game]; let h="";
- for(let i=0;i<nb;i++){
-   const main=choose(game,false,mode,engine,p.q).sort((a,b)=>a-b);
-   const spec=choose(game,true,mode,engine,p.sq).sort((a,b)=>a-b);
-   h+=`<b>Grille ${i+1}</b><br>`;
-   main.forEach(n=>h+=`<span class="ball">${String(n).padStart(2,"0")}</span>`);
-   h+=`<br><b>${p.slabel} :</b> `;
-   spec.forEach(n=>h+=`<span class="special">${String(n).padStart(2,"0")}</span>`);
-   h+="<br><br>";
- }
- result.innerHTML=h;
-}
-function showStats(){
- const game=jeu.value, p=params[game];
- const block=(title,a)=>{
-   if(!a.length) return `<b>${title}</b><br><span class="muted">Pas encore chargé</span>`;
-   return `<b>${title}</b><br>🔥 Plus sortis<br>`+
-     a.slice(0,8).map(x=>`${String(x.n).padStart(2,"0")} : ${x.count}`).join("<br>")+
-     `<br><br>🧊 Moins sortis<br>`+
-     a.slice(-8).map(x=>`${String(x.n).padStart(2,"0")} : ${x.count}`).join("<br>");
- };
- stats.innerHTML=`<div class="cols"><div>${block("Numéros",DATA[game].main)}</div><div>${block(p.slabel,DATA[game].special)}</div></div>`;
-}
-async function chargerStats(){
- try{
-   const r=await fetch("stats.json",{cache:"no-store"});
-   if(!r.ok) throw new Error();
-   const d=await r.json();
-   DATA=d.games||d;
-   document.getElementById("status").textContent="Statistiques FDJ chargées — "+new Date().toLocaleString("fr-FR");
- }catch(e){
-   status.textContent="Version iPhone installée — mise à jour FDJ automatique à ajouter à l'étape suivante";
- }
- showStats();
-}
-jeu.addEventListener("change",showStats);
-chargerStats();
+const labels={EuroMillions:"Étoiles",Loto:"Chance",EuroDreams:"Dream"};
+let CACHE={games:{},updated:null};
+function norm(s){return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replaceAll('°','').replaceAll('nº','n').replaceAll('n°','n')}
+function csvSplit(line,delim){let out=[],cur='',q=false;for(let i=0;i<line.length;i++){let c=line[i];if(c==='"'){if(q&&line[i+1]==='"'){cur+='"';i++}else q=!q}else if(c===delim&&!q){out.push(cur);cur=''}else cur+=c}out.push(cur);return out}
+function detectColumns(headers,game){const hs=headers.map(h=>[h,norm(h)]);const exact=rxs=>hs.filter(([h,n])=>rxs.some(rx=>rx.test(n))).map(x=>x[0]);let main=exact([/^boule[ _-]*[1-6]$/,/^numero[ _-]*[1-6]$/,/^num[ _-]*[1-6]$/]);let special;if(game==='EuroMillions')special=exact([/^etoile[ _-]*[1-2]$/,/^numero[ _-]*etoile[ _-]*[1-2]$/]);else if(game==='Loto')special=exact([/^numero[ _-]*chance$/,/^num[ _-]*chance$/,/^chance$/]);else special=exact([/^numero[ _-]*dream$/,/^num[ _-]*dream$/,/^n[ _-]*dream$/,/^dream$/]);const idx=h=>{let m=norm(h).match(/(\d+)/);return m?+m[1]:99};main=[...new Set(main)].sort((a,b)=>idx(a)-idx(b)).slice(0,PARAMS[game].q);special=[...new Set(special)].sort((a,b)=>idx(a)-idx(b)).slice(0,PARAMS[game].sq);if(main.length!==PARAMS[game].q||special.length!==PARAMS[game].sq)throw new Error('Colonnes FDJ non reconnues');return {main,special}}
+async function readArchive(game,url){const r=await fetch(url,{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const zip=await JSZip.loadAsync(await r.arrayBuffer());const names=Object.keys(zip.files).filter(n=>/\.(csv|txt)$/i.test(n));if(!names.length)throw new Error('Aucun CSV');let rows=[];for(const name of names){let text=await zip.files[name].async('string');let sample=text.slice(0,5000);let delim=(sample.split(';').length>=sample.split(',').length)?';':',';let lines=text.split(/\r?\n/).filter(Boolean);if(lines.length<2)continue;let headers=csvSplit(lines[0],delim);let cols;try{cols=detectColumns(headers,game)}catch(e){continue}let map=Object.fromEntries(headers.map((h,i)=>[h,i]));for(let k=1;k<lines.length;k++){let v=csvSplit(lines[k],delim);let mains=cols.main.map(c=>parseInt(v[map[c]],10));let specs=cols.special.map(c=>parseInt(v[map[c]],10));let p=PARAMS[game];if(mains.every(n=>n>=p.min&&n<=p.max)&&specs.every(n=>n>=p.smin&&n<=p.smax))rows.push([mains,specs])}}
+ if(!rows.length)throw new Error('Aucun tirage reconnu');let p=PARAMS[game],cm={},cs={};for(let n=p.min;n<=p.max;n++)cm[n]=0;for(let n=p.smin;n<=p.smax;n++)cs[n]=0;rows.forEach(([m,s])=>{m.forEach(n=>cm[n]++);s.forEach(n=>cs[n]++)});let main=Object.entries(cm).map(([n,count])=>({n:+n,count})).sort((a,b)=>b.count-a.count||a.n-b.n);let special=Object.entries(cs).map(([n,count])=>({n:+n,count})).sort((a,b)=>b.count-a.count||a.n-b.n);return {draws:rows.length,main,special}}
+async function refreshStats(){const st=document.getElementById('status');st.textContent='Actualisation FDJ en cours…';let ok=0,errs=[];for(const [game,url] of Object.entries(FDJ_ARCHIVES)){try{CACHE.games[game]=await readArchive(game,url);ok++}catch(e){errs.push(game)}}CACHE.updated=new Date().toLocaleString('fr-FR');if(ok===3)st.textContent='Données FDJ actualisées — '+CACHE.updated;else if(ok)st.textContent='Mise à jour partielle ('+ok+'/3) — '+CACHE.updated;else st.textContent='Stats FDJ indisponibles sur cet appareil — le mode Hasard reste opérationnel.';showStats()}
+function cryptoIndex(max){if(max<=0)return 0;const lim=Math.floor(0x100000000/max)*max;let x;do{x=crypto.getRandomValues(new Uint32Array(1))[0]}while(x>=lim);return x%max}
+function sample(pool,n){pool=[...pool];let out=[];while(pool.length&&out.length<n)out.push(pool.splice(cryptoIndex(pool.length),1)[0]);return out}
+function virtualBowl(pool,n){pool=[...pool];let out=[];for(let x=0;x<n;x++){for(let pass=0;pass<5;pass++)for(let i=pool.length-1;i>0;i--){let j=cryptoIndex(i+1);[pool[i],pool[j]]=[pool[j],pool[i]]}out.push(pool.splice(cryptoIndex(pool.length),1)[0])}return out}
+function selectPool(game,special,mode){let p=PARAMS[game],mn=special?p.smin:p.min,mx=special?p.smax:p.max,all=Array.from({length:mx-mn+1},(_,i)=>mn+i),st=CACHE.games[game]?.[special?'special':'main'];if(!st||mode==='Hasard')return all;let size=Math.min(12,all.length),hot=st.slice(0,size).map(x=>x.n),cold=st.slice(-size).map(x=>x.n);if(mode==='Chauds')return hot;if(mode==='Froids')return cold;return all}
+function draw(game,mode,engine){let p=PARAMS[game],picker=engine==='Boulier virtuel'?virtualBowl:sample;function choose(special,qty){if(mode!=='Mix chaud / froid')return picker(selectPool(game,special,mode),qty).sort((a,b)=>a-b);let st=CACHE.games[game]?.[special?'special':'main'];let mn=special?p.smin:p.min,mx=special?p.smax:p.max,all=Array.from({length:mx-mn+1},(_,i)=>mn+i);if(!st)return picker(all,qty).sort((a,b)=>a-b);let size=Math.min(12,all.length),hot=st.slice(0,size).map(x=>x.n),cold=st.slice(-size).map(x=>x.n),a=Math.floor(qty/2),vals=picker(hot,a),remain=cold.filter(x=>!vals.includes(x));vals=vals.concat(picker(remain,qty-a));return vals.sort((a,b)=>a-b)}return {main:choose(false,p.q),special:choose(true,p.sq)}}
+function makeDraws(game,mode,engine,nb){return {draws:Array.from({length:nb},()=>draw(game,mode,engine))}}
+function renderDraws(d,game){let h='';d.draws.forEach((x,i)=>{h+=`<b>Grille ${i+1}</b><br>`;x.main.forEach(n=>h+=`<span class="ball">${String(n).padStart(2,'0')}</span>`);h+=`<br><b>${labels[game]} :</b> `;x.special.forEach(n=>h+=`<span class="special">${String(n).padStart(2,'0')}</span>`);h+='<br><br>'});document.getElementById('result').innerHTML=h}
+function showStats(){let game=document.getElementById('jeu').value,g=CACHE.games[game];if(!g){document.getElementById('stats').innerHTML='<b>Statistiques non chargées.</b><br><span class="muted">Le tirage en mode Hasard reste disponible.</span>';return}const block=(title,a)=>`<b>${title}</b><br>🔥 Plus sortis<br>`+a.slice(0,8).map(x=>`${String(x.n).padStart(2,'0')} : ${x.count} sorties`).join('<br>')+`<br><br>🧊 Moins sortis<br>`+a.slice(-8).map(x=>`${String(x.n).padStart(2,'0')} : ${x.count} sorties`).join('<br>');document.getElementById('stats').innerHTML=`<div class="cols"><div>${block('Numéros',g.main)}</div><div>${block(labels[game],g.special)}</div></div><br><span class="muted">${g.draws} tirages lus dans l’archive FDJ.</span>`}
+let bowlTimer=null,bowlToken=0,bowlRunning=false;
+function finishBoulier(message){bowlRunning=false;if(bowlTimer){clearTimeout(bowlTimer);bowlTimer=null}document.getElementById('stopBtn').disabled=true;document.getElementById('generateBtn').disabled=false;document.getElementById('result').classList.remove('spinning');if(message)document.getElementById('status').textContent=message}
+function stopBoulier(){if(!bowlRunning)return;bowlToken++;finishBoulier('Boulier arrêté manuellement — tirage figé.')}
+function generer(){const game=document.getElementById('jeu').value,mode=document.getElementById('mode').value,engine=document.getElementById('engine').value,nb=+document.getElementById('nb').value;if(mode!=='Hasard'&&!CACHE.games[game]){document.getElementById('status').textContent='Stats FDJ indisponibles : passage en mode Hasard pour ce tirage.'}if(engine!=='Boulier virtuel'){renderDraws(makeDraws(game,mode,engine,nb),game);return}bowlToken++;const token=bowlToken;bowlRunning=true;document.getElementById('stopBtn').disabled=false;document.getElementById('generateBtn').disabled=true;document.getElementById('result').classList.add('spinning');document.getElementById('status').textContent='Boulier virtuel en rotation…';const start=performance.now(),autoStopMs=6000;function spinStep(){if(!bowlRunning||token!==bowlToken)return;renderDraws(makeDraws(game,mode,engine,nb),game);const elapsed=performance.now()-start;if(elapsed>=autoStopMs){finishBoulier('Boulier arrêté automatiquement — tirage final.');return}let delay=85;if(elapsed>3000)delay=150;if(elapsed>4200)delay=260;if(elapsed>5000)delay=430;bowlTimer=setTimeout(spinStep,delay)}spinStep()}
+document.getElementById('jeu').addEventListener('change',showStats);showStats();refreshStats();
 </script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
-  });
-}
-</script>
-
 </body>
 </html>

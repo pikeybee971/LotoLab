@@ -1,9 +1,9 @@
 {
   "status": "Données FDJ actualisées automatiquement",
-  "updated": "21/08/2026 05:06 UTC",
+  "updated": "22/08/2026 04:58 UTC",
   "games": {
     "EuroMillions": {
-      "draws": 683,
+      "draws": 684,
       "main": [
         {
           "n": 35,
@@ -27,26 +27,26 @@
         },
         {
           "n": 10,
-          "count": 78
+          "count": 79
         },
         {
           "n": 17,
           "count": 76
         },
         {
+          "n": 19,
+          "count": 75
+        },
+        {
+          "n": 45,
+          "count": 75
+        },
+        {
           "n": 47,
           "count": 75
         },
         {
-          "n": 19,
-          "count": 74
-        },
-        {
           "n": 24,
-          "count": 74
-        },
-        {
-          "n": 45,
           "count": 74
         },
         {
@@ -94,15 +94,15 @@
           "count": 70
         },
         {
+          "n": 14,
+          "count": 70
+        },
+        {
           "n": 5,
           "count": 69
         },
         {
           "n": 7,
-          "count": 69
-        },
-        {
-          "n": 14,
           "count": 69
         },
         {
@@ -155,7 +155,7 @@
         },
         {
           "n": 15,
-          "count": 62
+          "count": 63
         },
         {
           "n": 18,
@@ -221,7 +221,7 @@
         },
         {
           "n": 12,
-          "count": 119
+          "count": 120
         },
         {
           "n": 9,
@@ -253,7 +253,7 @@
         },
         {
           "n": 4,
-          "count": 91
+          "count": 92
         }
       ]
     },

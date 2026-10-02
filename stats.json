@@ -1,6 +1,6 @@
 {
   "status": "Données FDJ actualisées automatiquement",
-  "updated": "01/10/2026 10:08 UTC",
+  "updated": "02/10/2026 09:46 UTC",
   "games": {
     "EuroMillions": {
       "draws": 695,
@@ -501,11 +501,11 @@
       ]
     },
     "EuroDreams": {
-      "draws": 303,
+      "draws": 304,
       "main": [
         {
           "n": 21,
-          "count": 58
+          "count": 59
         },
         {
           "n": 22,
@@ -532,11 +532,11 @@
           "count": 54
         },
         {
-          "n": 30,
-          "count": 53
+          "n": 37,
+          "count": 54
         },
         {
-          "n": 37,
+          "n": 30,
           "count": 53
         },
         {
@@ -564,6 +564,10 @@
           "count": 47
         },
         {
+          "n": 9,
+          "count": 45
+        },
+        {
           "n": 14,
           "count": 45
         },
@@ -577,10 +581,6 @@
         },
         {
           "n": 7,
-          "count": 44
-        },
-        {
-          "n": 9,
           "count": 44
         },
         {
@@ -608,6 +608,10 @@
           "count": 42
         },
         {
+          "n": 12,
+          "count": 42
+        },
+        {
           "n": 26,
           "count": 42
         },
@@ -620,20 +624,16 @@
           "count": 41
         },
         {
-          "n": 12,
-          "count": 41
-        },
-        {
           "n": 13,
           "count": 41
         },
         {
-          "n": 16,
+          "n": 6,
           "count": 40
         },
         {
-          "n": 6,
-          "count": 39
+          "n": 16,
+          "count": 40
         },
         {
           "n": 25,
@@ -661,16 +661,16 @@
         },
         {
           "n": 36,
-          "count": 30
+          "count": 31
         }
       ],
       "special": [
         {
-          "n": 1,
-          "count": 67
+          "n": 3,
+          "count": 68
         },
         {
-          "n": 3,
+          "n": 1,
           "count": 67
         },
         {
